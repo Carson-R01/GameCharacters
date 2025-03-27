@@ -26,6 +26,11 @@ if (File.Exists(dkFile))
   dkCharacters = JsonSerializer.Deserialize<List<DonkeyKong>>(File.ReadAllText(dkFile))!;
   logger.Info($"File deserialized {dkFile}");
 }
+if (File.Exists(sfFile))
+{
+  sfCharacters = JsonSerializer.Deserialize<List<StreetFighter>>(File.ReadAllText(sfFile))!;
+  logger.Info($"File deserialized {sfFile}");
+}
 
 
 do
@@ -118,7 +123,7 @@ do
   }
     else if (choice == "6")
   {
-    // Remove Mario Character
+    // Remove Dk Character
     Console.WriteLine("Enter the Id of the character to remove:");
     if (UInt32.TryParse(Console.ReadLine(), out UInt32 Id))
     {
@@ -128,8 +133,54 @@ do
         logger.Error($"Character Id {Id} not found");
       } else {
         dkCharacters.Remove(character);
-        // serialize list<marioCharacter> into json file
+        // serialize list<dkCharacters> into json file
         File.WriteAllText(dkFile, JsonSerializer.Serialize(dkCharacters));
+        logger.Info($"Character Id {Id} removed");
+      }
+    } else {
+      logger.Error("Invalid Id");
+    }
+  } else if (string.IsNullOrEmpty(choice)) {
+    break;
+  } else {
+    logger.Info("Invalid choice");
+  }
+      if (choice == "7")
+  {
+    // Display Sf2 Characters
+    foreach(var c in sfCharacters)
+    {
+      Console.WriteLine(c.Display());
+    }
+  }
+  else if (choice == "8")
+  {
+    // Add Sf2 Character
+    // Generate unique Id
+    StreetFighter sf = new()
+    {
+      Id = sfCharacters.Count == 0 ? 1 : sfCharacters.Max(c => c.Id) + 1
+    };
+    InputCharacter(sf);
+    // Add Character
+    sfCharacters.Add(sf);
+    File.WriteAllText(sfFile, JsonSerializer.Serialize(sfCharacters));
+    logger.Info($"Character added: {sf.Name}");
+  }
+    else if (choice == "9")
+  {
+    // Remove Sf2 Character
+    Console.WriteLine("Enter the Id of the character to remove:");
+    if (UInt32.TryParse(Console.ReadLine(), out UInt32 Id))
+    {
+      StreetFighter? character = sfCharacters.FirstOrDefault(c => c.Id == Id);
+      if (character == null)
+      {
+        logger.Error($"Character Id {Id} not found");
+      } else {
+        sfCharacters.Remove(character);
+        // serialize list<sfCharacters> into json file
+        File.WriteAllText(sfFile, JsonSerializer.Serialize(sfCharacters));
         logger.Info($"Character Id {Id} removed");
       }
     } else {
