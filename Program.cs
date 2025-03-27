@@ -1,4 +1,5 @@
 ﻿using NLog;
+using System.Formats.Asn1;
 using System.Reflection;
 using System.Text.Json;
 string path = Directory.GetCurrentDirectory() + "//nlog.config";
@@ -39,14 +40,17 @@ do
   Console.WriteLine("1) Display Mario Characters");
   Console.WriteLine("2) Add Mario Character");
   Console.WriteLine("3) Remove Mario Character");
+  Console.WriteLine("4) Edit Mario Character");
 
-  Console.WriteLine("4) Display Donkey Kong Characters");
-  Console.WriteLine("5) Add Donkey Kong Character");
-  Console.WriteLine("6) Remove Donkey Kong Character");
+  Console.WriteLine("5) Display Donkey Kong Characters");
+  Console.WriteLine("6) Add Donkey Kong Character");
+  Console.WriteLine("7) Remove Donkey Kong Character");
+  Console.WriteLine("8) Edit Donkey Kong Character");
 
-  Console.WriteLine("7) Display Street Fighter Characters");
-  Console.WriteLine("8) Add Street Fighter Character");
-  Console.WriteLine("9) Remove Street Fighter Character");
+  Console.WriteLine("9) Display Street Fighter Characters");
+  Console.WriteLine("10) Add Street Fighter Character");
+  Console.WriteLine("11) Remove Street Fighter Character");
+  Console.WriteLine("12) Remove Street Fighter Character");
   Console.WriteLine("Enter to quit");
 
   // input selection
@@ -99,7 +103,29 @@ do
   } else {
     logger.Info("Invalid choice");
   }
-    if (choice == "4")
+  if (choice == "4")
+{
+    Console.WriteLine("Enter the ID of the Mario character to edit:");
+    if (UInt32.TryParse(Console.ReadLine(), out UInt32 Id))
+    {
+        Mario? character = marios.FirstOrDefault(c => c.Id == Id);
+        if (character == null)
+        {
+            logger.Error($"Character Id {Id} not found");
+        }
+        else
+        {
+            InputCharacter(character);
+            File.WriteAllText(marioFileName, JsonSerializer.Serialize(marios));
+            logger.Info($"Character Id {Id} edited");
+        }
+    }
+    else
+    {
+        logger.Error("Invalid Id");
+    }
+}
+    if (choice == "5")
   {
     // Display Dk Characters
     foreach(var c in dkCharacters)
@@ -107,7 +133,7 @@ do
       Console.WriteLine(c.Display());
     }
   }
-  else if (choice == "5")
+  else if (choice == "6")
   {
     // Add Dk Character
     // Generate unique Id
@@ -121,7 +147,7 @@ do
     File.WriteAllText(dkFile, JsonSerializer.Serialize(dkCharacters));
     logger.Info($"Character added: {dk.Name}");
   }
-    else if (choice == "6")
+    else if (choice == "7")
   {
     // Remove Dk Character
     Console.WriteLine("Enter the Id of the character to remove:");
@@ -145,7 +171,7 @@ do
   } else {
     logger.Info("Invalid choice");
   }
-      if (choice == "7")
+      if (choice == "9")
   {
     // Display Sf2 Characters
     foreach(var c in sfCharacters)
@@ -153,7 +179,7 @@ do
       Console.WriteLine(c.Display());
     }
   }
-  else if (choice == "8")
+  else if (choice == "10")
   {
     // Add Sf2 Character
     // Generate unique Id
@@ -167,7 +193,7 @@ do
     File.WriteAllText(sfFile, JsonSerializer.Serialize(sfCharacters));
     logger.Info($"Character added: {sf.Name}");
   }
-    else if (choice == "9")
+    else if (choice == "11")
   {
     // Remove Sf2 Character
     Console.WriteLine("Enter the Id of the character to remove:");
