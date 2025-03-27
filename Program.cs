@@ -10,12 +10,21 @@ logger.Info("Program started");
 
 // deserialize mario json from file into List<Mario>
 string marioFileName = "mario.json";
+string dkFile = "dk.json";
+string sfFile = "sf2.json";
 List<Mario> marios = [];
+List<DonkeyKong> dkCharacters = [];
+List<StreetFighter> sfCharacters = [];
 // check if file exists
 if (File.Exists(marioFileName))
 {
   marios = JsonSerializer.Deserialize<List<Mario>>(File.ReadAllText(marioFileName))!;
   logger.Info($"File deserialized {marioFileName}");
+}
+if (File.Exists(dkFile))
+{
+  dkCharacters = JsonSerializer.Deserialize<List<DonkeyKong>>(File.ReadAllText(dkFile))!;
+  logger.Info($"File deserialized {dkFile}");
 }
 
 
@@ -75,6 +84,52 @@ do
         marios.Remove(character);
         // serialize list<marioCharacter> into json file
         File.WriteAllText(marioFileName, JsonSerializer.Serialize(marios));
+        logger.Info($"Character Id {Id} removed");
+      }
+    } else {
+      logger.Error("Invalid Id");
+    }
+  } else if (string.IsNullOrEmpty(choice)) {
+    break;
+  } else {
+    logger.Info("Invalid choice");
+  }
+    if (choice == "4")
+  {
+    // Display Dk Characters
+    foreach(var c in dkCharacters)
+    {
+      Console.WriteLine(c.Display());
+    }
+  }
+  else if (choice == "5")
+  {
+    // Add Dk Character
+    // Generate unique Id
+    DonkeyKong dk = new()
+    {
+      Id = dkCharacters.Count == 0 ? 1 : dkCharacters.Max(c => c.Id) + 1
+    };
+    InputCharacter(dk);
+    // Add Character
+    dkCharacters.Add(dk);
+    File.WriteAllText(dkFile, JsonSerializer.Serialize(dkCharacters));
+    logger.Info($"Character added: {dk.Name}");
+  }
+    else if (choice == "6")
+  {
+    // Remove Mario Character
+    Console.WriteLine("Enter the Id of the character to remove:");
+    if (UInt32.TryParse(Console.ReadLine(), out UInt32 Id))
+    {
+      DonkeyKong? character = dkCharacters.FirstOrDefault(c => c.Id == Id);
+      if (character == null)
+      {
+        logger.Error($"Character Id {Id} not found");
+      } else {
+        dkCharacters.Remove(character);
+        // serialize list<marioCharacter> into json file
+        File.WriteAllText(dkFile, JsonSerializer.Serialize(dkCharacters));
         logger.Info($"Character Id {Id} removed");
       }
     } else {
