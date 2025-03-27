@@ -239,6 +239,28 @@ do
   } else {
     logger.Info("Invalid choice");
   }
+  if (choice == "12") // Edit Street Fighter Character
+{
+    Console.WriteLine("Enter the ID of the Street Fighter character to edit:");
+    if (UInt32.TryParse(Console.ReadLine(), out UInt32 Id))
+    {
+        StreetFighter? character = sfCharacters.FirstOrDefault(c => c.Id == Id);
+        if (character == null)
+        {
+            logger.Error($"Character Id {Id} not found");
+        }
+        else
+        {
+            InputCharacter(character);
+            File.WriteAllText(sfFile, JsonSerializer.Serialize(sfCharacters));
+            logger.Info($"Character Id {Id} edited");
+        }
+    }
+    else
+    {
+        logger.Error("Invalid Id");
+    }
+}
 } while (true);
 
 logger.Info("Program ended");
